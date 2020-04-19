@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.synechron.assignment.SyneAssignment.entity.HealthInsurance;
 import com.synechron.assignment.SyneAssignment.entity.Policy;
-import com.synechron.assignment.SyneAssignment.exceptionHandling.HealthInsuranceCompanyNotFoundException;
+import com.synechron.assignment.SyneAssignment.exceptionHandling.ObjectNotFoundException;
 import com.synechron.assignment.SyneAssignment.service.HealthInsuranceService;
 
 
 @RestController
 @CrossOrigin(origins="*")
-@RequestMapping("/api/v1")
+@RequestMapping("/healthInsurances")
 public class HealthInsuranceController {
 	
 	@Autowired
@@ -30,11 +30,9 @@ public class HealthInsuranceController {
 	
 	
 	//save the company and policy
-	@PostMapping("/healthInsurances")
+	@PostMapping
 	public String savePlans(@RequestBody HealthInsurance thehealthInsurance)
 	{
-		
-		System.out.println(thehealthInsurance.getCompanyName());
 		
 		thehealthInsurance.setCompanyId(0);
 		
@@ -44,63 +42,65 @@ public class HealthInsuranceController {
 	}
 	
 	//get all companies
-	@GetMapping("/healthInsurances")
-	public List<HealthInsurance> getAllPlans()
+	@GetMapping
+	public List<HealthInsurance> getAllPlans() throws ObjectNotFoundException
 	{
-		return healthInsuranceService.findAll();
+		List<HealthInsurance> healthInsurance = healthInsuranceService.findAll();
+		
+		if(healthInsurance.size() == 0)
+		{
+			throw new ObjectNotFoundException("No Insurance Plans exists");
+		}
+		return healthInsurance;
+		
 	}
 	
-	//to get company by companyID
-	@GetMapping("/healthInsurances/{companyID}")
-	public HealthInsurance getPlansByID(@PathVariable long companyID)
+	//to get all the policies that are active by companyID
+	@GetMapping("/{companyID}")
+	public List<Policy> getPlansByID(@PathVariable long companyID) throws ObjectNotFoundException
 	{
 		
 		HealthInsurance thehealthInsurance = healthInsuranceService.findById(companyID);
 		
 		if(thehealthInsurance == null)
 		{
-			throw new HealthInsuranceCompanyNotFoundException(" HealthInsurance company of ID is not present " +companyID);
+			throw new ObjectNotFoundException(" HealthInsurance company of ID is not present " +companyID);
 		}
 		
-		return thehealthInsurance;
+		//to check active policy
+		List<Policy> policy = healthInsuranceService.findByHealthInsuranceAndIsActive(thehealthInsurance,true);
+		
+		if(policy.size() == 0)
+		{
+			
+		throw new ObjectNotFoundException(" No active policy for Company " +thehealthInsurance.getCompanyName());
+		}
+		
+		return policy;
+		
 	}
 	
-	//to get all the policies of specific company
-	@GetMapping("/healthInsurances/{companyID}/policy")
-	public List<Policy> getPoliciesByPlanID(@PathVariable long companyID)
-	{
-		
-		HealthInsurance thehealthInsurance = healthInsuranceService.findById(companyID);
-		
-		if(thehealthInsurance == null)
-		{
-			throw new HealthInsuranceCompanyNotFoundException(" HealthInsurance company of ID is not present " +companyID);
-		}
-		
-		return thehealthInsurance.getPolicy();
-	}
+	
 		
 	//to update company
-	@PutMapping("/healthInsurances")
+	@PutMapping
 	public HealthInsurance updatePlans(@RequestBody HealthInsurance thehealthInsurance)
 	{
 		healthInsuranceService.save(thehealthInsurance);
-		
-		System.out.println("check: " +thehealthInsurance.getPolicy());
 		
 		return thehealthInsurance;
 	}
 	
 	//to delete company
-	@DeleteMapping("/healthInsurances/{companyID}")
-	public String deletePlans(@PathVariable long companyID)
+	@DeleteMapping("/{companyID}")
+	public String deletePlans(@PathVariable long companyID) throws ObjectNotFoundException
 	{
 		
 		HealthInsurance thehealthInsurance = healthInsuranceService.findById(companyID);
 		
 		if(thehealthInsurance == null)
 		{
-			throw new HealthInsuranceCompanyNotFoundException(" HealthInsurance company of ID is not present " +companyID);
+			throw new ObjectNotFoundException(" HealthInsurance company of ID is not present " +companyID);
 		}
 		
 		healthInsuranceService.deleteById(companyID);

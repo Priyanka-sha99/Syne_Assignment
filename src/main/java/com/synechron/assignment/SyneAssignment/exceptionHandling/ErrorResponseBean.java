@@ -1,16 +1,16 @@
 package com.synechron.assignment.SyneAssignment.exceptionHandling;
 
-public class HealthInsuranceErrorResponse {
+public class ErrorResponseBean {
 	
 	private int Status;
 	private String message;
 	private long timestamp;
 	
-	public HealthInsuranceErrorResponse() {
+	public ErrorResponseBean() {
 		
 	}
 
-	public HealthInsuranceErrorResponse(int status, String message, long timestamp) {
+	public ErrorResponseBean(int status, String message, long timestamp) {
 		super();
 		Status = status;
 		this.message = message;

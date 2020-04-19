@@ -1,20 +1,24 @@
 package com.synechron.assignment.SyneAssignment.entity;
 
-import javax.persistence.CascadeType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
 @Table
+@JsonIgnoreProperties("")
 public class Policy {
 	
 	
@@ -22,7 +26,7 @@ public class Policy {
 	private long policyNum;
 	
 	@Column
-	private String policyType;
+	private String policyName;
 	
 	@Column
 	private long cover;
@@ -36,6 +40,11 @@ public class Policy {
 	@Column
 	private double premiumYearly;
 	
+	
+	@Column
+	@JsonProperty(access = Access.WRITE_ONLY)
+	private boolean isActive = true;
+	
 	@JsonBackReference
 	@ManyToOne 
 	@JoinColumn(name="companyId")
@@ -47,26 +56,21 @@ public class Policy {
 	{
 		
 	}
-
 	
-	
-
-	public Policy(long policyNum, String policyType, long cover, float numOfYears, double premiumMonthly,
-			double premiumYearly, HealthInsurance healthInsurance) {
+	public Policy(long policyNum, String policyName, long cover, float numOfYears, double premiumMonthly,
+			double premiumYearly, HealthInsurance healthInsurance, boolean isActive) {
 		super();
 		this.policyNum = policyNum;
-		this.policyType = policyType;
+		this.policyName = policyName;
 		this.cover = cover;
 		this.numOfYears = numOfYears;
 		this.premiumMonthly = premiumMonthly;
 		this.premiumYearly = premiumYearly;
 		this.healthInsurance = healthInsurance;
+		this.isActive = isActive;
 	}
 
-
-
-
-	public long getPolicyNum() {
+    public long getPolicyNum() {
 		return policyNum;
 	}
 
@@ -74,12 +78,12 @@ public class Policy {
 		this.policyNum = policyNum;
 	}
 
-	public String getPolicyType() {
-		return policyType;
+	public String getPolicyName() {
+		return policyName;
 	}
 
-	public void setPolicyType(String policyType) {
-		this.policyType = policyType;
+	public void setPolicyType(String policyName) {
+		this.policyName = policyName;
 	}
 
 	public long getCover() {
@@ -122,9 +126,20 @@ public class Policy {
 		this.healthInsurance = healthInsurance;
 	}
 
+	
+
+	@JsonIgnore
+	public boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
 	@Override
 	public String toString() {
-		return "Policy [policyNum=" + policyNum + ", policyType=" + policyType + ", cover=" + cover + ", numOfYears="
+		return "Policy [policyNum=" + policyNum + ", policyType=" + policyName + ", cover=" + cover + ", numOfYears="
 				+ numOfYears + ", premiumMonthly=" + premiumMonthly + ", premiumYearly=" + premiumYearly
 				+ ", healthInsurance= ]";
 	}

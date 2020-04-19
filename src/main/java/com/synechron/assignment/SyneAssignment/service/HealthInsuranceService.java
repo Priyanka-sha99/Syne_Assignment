@@ -3,6 +3,7 @@ package com.synechron.assignment.SyneAssignment.service;
 import java.util.List;
 
 import com.synechron.assignment.SyneAssignment.entity.HealthInsurance;
+import com.synechron.assignment.SyneAssignment.entity.Policy;
 
 public interface HealthInsuranceService {
 
@@ -14,8 +15,7 @@ public interface HealthInsuranceService {
 
 	public void deleteById(long companyID);
 
-	//public HealthInsurance findByIdAndPolicyNum(long companyID, long policyNum);
-	
+	public List<Policy> findByHealthInsuranceAndIsActive(HealthInsurance thehealthInsurance, boolean b);
 	
 
 }

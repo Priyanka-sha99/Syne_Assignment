@@ -9,14 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.synechron.assignment.SyneAssignment.entity.HealthInsurance;
-import com.synechron.assignment.SyneAssignment.exceptionHandling.HealthInsuranceCompanyNotFoundException;
+import com.synechron.assignment.SyneAssignment.entity.Policy;
 import com.synechron.assignment.SyneAssignment.repo.HealthInsuranceRepository;
+import com.synechron.assignment.SyneAssignment.repo.PolicyRepository;
 
 @Service
 public class HealthInsuranceServiceImpl implements HealthInsuranceService {
 
 	@Autowired
 	private HealthInsuranceRepository healthInsuranceRepo;
+	
+	@Autowired
+	private PolicyRepository policyRepo;
 	
 	@Override
 	public void save(HealthInsurance thehealthInsurance) {
@@ -34,19 +38,9 @@ public class HealthInsuranceServiceImpl implements HealthInsuranceService {
 	@Override
 	public HealthInsurance findById(long companyID) {
 		
-		HealthInsurance thehealthInsurance = null;
-		
 		Optional<HealthInsurance> result = healthInsuranceRepo.findById(companyID);
 		
-		if(result.isPresent())
-		{
-			thehealthInsurance = result.get();
-		}
-		else
-		{
-			throw new HealthInsuranceCompanyNotFoundException("HealthInsurance company of ID is not present- " +companyID);
-		}
-		return thehealthInsurance;
+		return result.isPresent()? result.get(): null;
 	}
 
 	@Override
@@ -56,11 +50,14 @@ public class HealthInsuranceServiceImpl implements HealthInsuranceService {
 		
 	}
 
-	/*@Override
-	public HealthInsurance findByIdAndPolicyNum(long companyID, long policyNum) {
+	@Override
+	public List<Policy> findByHealthInsuranceAndIsActive(HealthInsurance thehealthInsurance, boolean b) {
 		
-		return healthInsuranceRepo.findByCompanyIdAndPolicyNum(companyID, policyNum);
-	}*/
+		return policyRepo.findByHealthInsuranceAndIsActive(thehealthInsurance, b);
+	}
+
+
+	
 	
 
 }

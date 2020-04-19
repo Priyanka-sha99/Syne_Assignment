@@ -8,28 +8,28 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 
 @ControllerAdvice
-public class HealthInsuranceRestExceptionHandler {
+public class RestExceptionHandler {
+	
 	
 	@ExceptionHandler
-	public ResponseEntity<HealthInsuranceErrorResponse> handleException(HealthInsuranceCompanyNotFoundException exe)
+	public ResponseEntity<ErrorResponseBean> handleException(ObjectNotFoundException exe)
 	{
-		HealthInsuranceErrorResponse error = new HealthInsuranceErrorResponse();
+		ErrorResponseBean error = new ErrorResponseBean();
 		error.setStatus(HttpStatus.NOT_FOUND.value());
 		error.setMessage(exe.getMessage());
 		error.setTimestamp(System.currentTimeMillis());
-		return new ResponseEntity<HealthInsuranceErrorResponse>(error, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<ErrorResponseBean>(error, HttpStatus.NOT_FOUND);
 	}
-	
 	//to handle all type of exceptions like string type use generic exception
 	
 	@ExceptionHandler
-	public ResponseEntity<HealthInsuranceErrorResponse> handleExp(Exception exe)
+	public ResponseEntity<ErrorResponseBean> handleExp(Exception exe)
 	{
-		HealthInsuranceErrorResponse error = new HealthInsuranceErrorResponse();
+		ErrorResponseBean error = new ErrorResponseBean();
 		error.setStatus(HttpStatus.BAD_REQUEST.value());
 		error.setMessage(exe.getMessage());
 		error.setTimestamp(System.currentTimeMillis());
-		return new ResponseEntity<HealthInsuranceErrorResponse>(error, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<ErrorResponseBean>(error, HttpStatus.BAD_REQUEST);
 	}
 
 }

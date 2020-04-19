@@ -37,13 +37,9 @@ public class HealthInsurance {
 	@JoinColumn(name="companyId", referencedColumnName="companyId")
 	private List<Policy> policy;
 	
-	
-	
 	public HealthInsurance() {
 		
 	}
-	
-	
 	
 	public HealthInsurance(long companyId, String companyName, List<Policy> policy) {
 		super();
