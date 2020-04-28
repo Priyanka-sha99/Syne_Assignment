@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-import com.synechron.assignment.SyneAssignment.entity.HealthInsurance;
 import com.synechron.assignment.SyneAssignment.entity.Policy;
 import com.synechron.assignment.SyneAssignment.exceptionHandling.ObjectNotFoundException;
 import com.synechron.assignment.SyneAssignment.service.HealthInsuranceService;
@@ -31,27 +30,65 @@ public class HealthInsuranceController {
 	
 	//save the company and policy
 	@PostMapping
-	public String savePlans(@RequestBody HealthInsurance thehealthInsurance)
+	public String savePlans(@RequestBody Policy thePolicy)
 	{
+		//thePolicy.setPolicyId(0);
 		
-		thehealthInsurance.setCompanyId(0);
-		
-		healthInsuranceService.save(thehealthInsurance);
+		healthInsuranceService.save(thePolicy);
 		
 		return "Health Insurance Plan added successfully";
 	}
 	
 	//get all companies
 	@GetMapping
-	public List<HealthInsurance> getAllPlans() throws ObjectNotFoundException
+	public List<Policy> getAllPlans() throws ObjectNotFoundException
 	{
-		List<HealthInsurance> healthInsurance = healthInsuranceService.findAll();
+		List<Policy> thePolicy = healthInsuranceService.findAll();
 		
-		if(healthInsurance.size() == 0)
+		if(thePolicy.size() == 0)
 		{
-			throw new ObjectNotFoundException("No Insurance Plans exists");
+			throw new ObjectNotFoundException("No Plans exists");
 		}
-		return healthInsurance;
+		return thePolicy;
+		
+	}
+	
+	//getbypolicyTypeAndAge
+		@GetMapping("/{planType}/{ageGroup}")
+		public List<Policy> getUsingPolicyTypeandAge(@PathVariable String planType, @PathVariable String ageGroup) throws ObjectNotFoundException
+		{
+			
+			
+			//to check active policy
+			List<Policy> policy = healthInsuranceService.findByPlanTypeAndAgeGroupAndIsActive(planType,ageGroup,true);
+			
+			if(policy == null)
+			{
+				
+			throw new ObjectNotFoundException(" No active policy for Company ");
+			}
+			
+			return policy;
+			
+		}
+	
+	
+	//getbypolicyTypeAndageAndCover
+	@GetMapping("/{planType}/{ageGroup}/{cover}")
+	public Policy getPolicyTypeAgeCover(@PathVariable String planType, @PathVariable String ageGroup, @PathVariable Long cover) throws ObjectNotFoundException
+	{
+		
+		
+		//to check active policy
+		Policy policy = healthInsuranceService.findByPlanTypeAndAgeGroupAndCoverAndIsActive(planType,ageGroup,cover,true);
+		
+		if(policy == null)
+		{
+			
+		throw new ObjectNotFoundException(" No active policy for Company ");
+		}
+		
+		return policy;
 		
 	}
 	
@@ -60,20 +97,44 @@ public class HealthInsuranceController {
 	public List<Policy> getPlansByID(@PathVariable long companyID) throws ObjectNotFoundException
 	{
 		
-		HealthInsurance thehealthInsurance = healthInsuranceService.findById(companyID);
+		Policy thePolicy = healthInsuranceService.findById(companyID);
 		
-		if(thehealthInsurance == null)
+		if(thePolicy == null)
 		{
 			throw new ObjectNotFoundException(" HealthInsurance company of ID is not present " +companyID);
 		}
 		
 		//to check active policy
-		List<Policy> policy = healthInsuranceService.findByHealthInsuranceAndIsActive(thehealthInsurance,true);
+		List<Policy> policy = healthInsuranceService.findByHealthInsuranceAndIsActive(thePolicy,true);
 		
 		if(policy.size() == 0)
 		{
 			
-		throw new ObjectNotFoundException(" No active policy for Company " +thehealthInsurance.getCompanyName());
+		throw new ObjectNotFoundException(" No active policy for Company " +thePolicy.getPolicyName());
+		}
+		
+		return policy;
+		
+	}
+	
+	@GetMapping("/{companyName}")
+	public List<Policy> getPlansByID(@PathVariable String companyName) throws ObjectNotFoundException
+	{
+		
+		Policy thePolicy = healthInsuranceService.findByCompanyName(companyName);
+		
+		if(thePolicy == null)
+		{
+			throw new ObjectNotFoundException(" HealthInsurance company of ID is not present " +companyName);
+		}
+		
+		//to check active policy
+		List<Policy> policy = healthInsuranceService.findByHealthInsuranceAndIsActive(thePolicy,true);
+		
+		if(policy.size() == 0)
+		{
+			
+		throw new ObjectNotFoundException(" No active policy for Company " +thePolicy.getPolicyName());
 		}
 		
 		return policy;
@@ -84,7 +145,7 @@ public class HealthInsuranceController {
 		
 	//to update company
 	@PutMapping
-	public HealthInsurance updatePlans(@RequestBody HealthInsurance thehealthInsurance)
+	public Policy updatePlans(@RequestBody Policy thehealthInsurance)
 	{
 		healthInsuranceService.save(thehealthInsurance);
 		
@@ -96,9 +157,9 @@ public class HealthInsuranceController {
 	public String deletePlans(@PathVariable long companyID) throws ObjectNotFoundException
 	{
 		
-		HealthInsurance thehealthInsurance = healthInsuranceService.findById(companyID);
+		Policy thePolicy = healthInsuranceService.findById(companyID);
 		
-		if(thehealthInsurance == null)
+		if(thePolicy == null)
 		{
 			throw new ObjectNotFoundException(" HealthInsurance company of ID is not present " +companyID);
 		}

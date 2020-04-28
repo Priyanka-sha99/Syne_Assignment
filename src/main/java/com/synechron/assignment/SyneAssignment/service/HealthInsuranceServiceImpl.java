@@ -8,10 +8,8 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.synechron.assignment.SyneAssignment.entity.HealthInsurance;
 import com.synechron.assignment.SyneAssignment.entity.Policy;
 import com.synechron.assignment.SyneAssignment.repo.HealthInsuranceRepository;
-import com.synechron.assignment.SyneAssignment.repo.PolicyRepository;
 
 @Service
 public class HealthInsuranceServiceImpl implements HealthInsuranceService {
@@ -19,26 +17,25 @@ public class HealthInsuranceServiceImpl implements HealthInsuranceService {
 	@Autowired
 	private HealthInsuranceRepository healthInsuranceRepo;
 	
-	@Autowired
-	private PolicyRepository policyRepo;
+	
 	
 	@Override
-	public void save(HealthInsurance thehealthInsurance) {
+	public void save(Policy thepolicy) {
 		
-		healthInsuranceRepo.save(thehealthInsurance);
+		healthInsuranceRepo.save(thepolicy);
 		
 	}
 
 	@Override
-	public List<HealthInsurance> findAll() {
+	public List<Policy> findAll() {
 		
 		return healthInsuranceRepo.findAll();
 	}
 
 	@Override
-	public HealthInsurance findById(long companyID) {
+	public Policy findById(long companyID) {
 		
-		Optional<HealthInsurance> result = healthInsuranceRepo.findById(companyID);
+		Optional<Policy> result = healthInsuranceRepo.findById(companyID);
 		
 		return result.isPresent()? result.get(): null;
 	}
@@ -51,9 +48,32 @@ public class HealthInsuranceServiceImpl implements HealthInsuranceService {
 	}
 
 	@Override
-	public List<Policy> findByHealthInsuranceAndIsActive(HealthInsurance thehealthInsurance, boolean b) {
+	public List<Policy> findByHealthInsuranceAndIsActive(Policy thePolicy, boolean b) {
 		
-		return policyRepo.findByHealthInsuranceAndIsActive(thehealthInsurance, b);
+		//return healthInsuranceRepo.findByHealthInsuranceAndIsActive(thePolicy, b);
+		return null;
+	}
+
+	@Override
+	public Policy findByCompanyName(String companyName) {
+		
+		//Optional<Policy> result = healthInsuranceRepo.findByCompanyName(companyName);
+		
+		//return result.isPresent()? result.get(): null;
+		return null;
+	}
+
+	@Override
+	public Policy findByPlanTypeAndAgeGroupAndCoverAndIsActive(String planType, String ageGroup, Long cover,
+			boolean b) {
+		
+		return healthInsuranceRepo.findByPlanTypeAndAgeGroupAndCoverAndIsActive(planType,ageGroup,cover,b);
+	}
+
+	@Override
+	public List<Policy> findByPlanTypeAndAgeGroupAndIsActive(String planType, String ageGroup, boolean b) {
+		
+		return healthInsuranceRepo.findByPlanTypeAndAgeGroupAndIsActive(planType,ageGroup,b);
 	}
 
 
